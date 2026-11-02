@@ -1,14 +1,22 @@
-"""Inverted index, exact Jaccard graph, PageRank and search."""
+"""Inverted index, lecture-defined weighted graph, PageRank and search."""
 import hashlib
 import json
 import time
 from collections import Counter
+from contextlib import nullcontext
 
 from .regex import Regex
 from .text import clean_text, frequencies, tokens
+from .jaccard import read_vectors, weighted_overlap
 
 
-def import_book(db, book, text, min_words=10000):
+def configure_bulk_import(db):
+    """Bound the bulk-import page cache and reduce regenerable WAL fsyncs."""
+    db.execute('PRAGMA cache_size=-524288')  # At most 512 MiB, allocated as needed.
+    db.execute('PRAGMA synchronous=NORMAL')  # WAL remains corruption-safe.
+
+
+def import_book(db, book, text, min_words=10000, term_ids=None, commit=True):
     """Insert one book and its postings atomically; reject duplicate contents."""
     if db.execute('SELECT 1 FROM books WHERE id=?', (book['id'],)).fetchone():
         return False
@@ -20,17 +28,33 @@ def import_book(db, book, text, min_words=10000):
     digest = hashlib.sha256(content.encode('utf-8')).hexdigest()
     if db.execute('SELECT 1 FROM books WHERE digest=?', (digest,)).fetchone():
         return False
-    with db:
+    new_ids = {}
+    with db if commit else nullcontext(db):
         db.execute('INSERT INTO books VALUES (?,?,?,?,?,?,?)',
                    (book['id'], book['title'], book.get('author', 'Unknown'),
                     book.get('source', ''), size, digest, ' '.join(content.split())[:650]))
-        db.executemany('INSERT OR IGNORE INTO terms(word) VALUES (?)', ((w,) for w in counts))
-        # Keep SQL parameters bounded; SQLite does the indexed term lookup.
-        db.executemany('INSERT INTO postings SELECT id,?,? FROM terms WHERE word=?',
-                       ((book['id'], n, w) for w, n in counts.items()))
+        if term_ids is None:
+            db.executemany('INSERT OR IGNORE INTO terms(word) VALUES (?)', ((w,) for w in counts))
+            db.executemany('INSERT INTO postings SELECT id,?,? FROM terms WHERE word=?',
+                           ((book['id'], n, w) for w, n in counts.items()))
+        else:
+            # Reuse the vocabulary map for a bulk import instead of repeating
+            # dictionary B-tree lookups for every term in every book.
+            missing = [w for w in counts if w not in term_ids]
+            db.executemany('INSERT OR IGNORE INTO terms(word) VALUES (?)', ((w,) for w in missing))
+            for offset in range(0, len(missing), 500):
+                words = missing[offset:offset + 500]
+                placeholders = ','.join('?' for _ in words)
+                new_ids.update((word, term_id) for term_id, word in db.execute(
+                    f'SELECT id,word FROM terms WHERE word IN ({placeholders})', words))
+            postings = sorted((term_ids[w] if w in term_ids else new_ids[w], book['id'], n)
+                              for w, n in counts.items())
+            db.executemany('INSERT INTO postings VALUES (?,?,?)', postings)
         db.execute("DELETE FROM metadata WHERE key='graph'")
         db.execute('DELETE FROM scores')
         db.execute('DELETE FROM edges')
+    if term_ids is not None:
+        term_ids.update(new_ids)
     return True
 
 
@@ -61,11 +85,8 @@ def pagerank(nodes, edges, damping=0.85, tolerance=1e-10, max_iterations=200):
     raise ValueError(f'PageRank did not converge after {max_iterations} iterations.')
 
 
-def build_graph(db, threshold=0.30):
-    """Exact all-pairs Jaccard using integer bitsets over all indexed terms."""
-    if not 0 < threshold <= 1:
-        raise ValueError('Graph threshold must be in (0, 1].')
-    started = time.perf_counter()
+def book_vectors(db):
+    """Return exact vocabulary bitsets and set sizes without changing the DB."""
     ids = [r[0] for r in db.execute('SELECT id FROM books ORDER BY id')]
     max_term = db.execute('SELECT COALESCE(MAX(id),0) FROM terms').fetchone()[0]
     vectors, sizes = {}, {}
@@ -77,19 +98,30 @@ def build_graph(db, threshold=0.30):
             size += 1
         vectors[book_id] = int.from_bytes(bits, 'little')
         sizes[book_id] = size
+    return ids, vectors, sizes
+
+
+def build_graph(db, threshold=0.50):
+    """Lecture 3 count-weighted distance, strict distance < 1-threshold."""
+    if not 0 <= threshold < 1:
+        raise ValueError('Similarity threshold must be in [0, 1).')
+    started = time.perf_counter()
+    ids, vectors = read_vectors(db)
     edges = []
     for i, a in enumerate(ids):
         for b in ids[i + 1:]:
-            common = (vectors[a] & vectors[b]).bit_count()
-            union = sizes[a] + sizes[b] - common
-            similarity = common / union if union else 0
-            if similarity >= threshold:
+            minimum, maximum, _ = weighted_overlap(vectors[a], vectors[b])
+            similarity = minimum / maximum if maximum else 0
+            if similarity > threshold:
                 edges.append((a, b, similarity))
     ranks, iterations = pagerank(ids, edges)
-    info = {'threshold': threshold, 'nodes': len(ids), 'edges': len(edges),
+    info = {'threshold': threshold, 'distance_threshold': 1 - threshold,
+            'comparison': 'distance strictly less than distance_threshold',
+            'metric': 'lecture3-weighted-shared', 'nodes': len(ids), 'edges': len(edges),
             'iterations': iterations, 'damping': 0.85, 'tolerance': 1e-10,
             'seconds': round(time.perf_counter() - started, 4),
-            'representation': 'sets of all normalized indexed words',
+            'representation': 'occurrence counts over shared normalized indexed words',
+            'empty_intersection_distance': 1,
             'ranking': 'unweighted undirected PageRank'}
     with db:
         db.execute('DELETE FROM edges')
@@ -146,7 +178,24 @@ def search(db, query, mode='keyword', ranking='pagerank', page=1, page_size=12):
     else:
         # Indexed vocabulary is case-folded, so expressions use the same convention.
         matcher = Regex(query.casefold())
-        for row in db.execute('SELECT id,word FROM terms'):
+        first = matcher.first_characters()
+        parameters, predicates = [], []
+        if first is not None and len(first) <= 8:
+            for char in sorted(first):
+                if ord(char) < 0x10ffff:
+                    predicates.append('(word>=? AND word<?)')
+                    parameters.extend([char, chr(ord(char) + 1)])
+                else:
+                    predicates.append('word>=?')
+                    parameters.append(char)
+            if matcher.fullmatch(''):
+                predicates.append("word=''")
+            # BINARY word ordering makes each interval an exact first-character
+            # prefix. Every candidate still passes through the custom NFA.
+            vocabulary_sql = 'SELECT id,word FROM terms WHERE ' + (' OR '.join(predicates) or '0')
+        else:
+            vocabulary_sql = 'SELECT id,word FROM terms'
+        for row in db.execute(vocabulary_sql, parameters):
             if time.perf_counter() - started > 8:
                 raise ValueError('This regex is too expensive. Try a shorter, more specific expression.')
             if matcher.fullmatch(row['word']):

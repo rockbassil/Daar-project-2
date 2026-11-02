@@ -1,0 +1,73 @@
+clients,request,mode,query,status,ms,results,error
+1,1,keyword,sea,200,18.92969999971683,1502,
+1,2,keyword,love,200,17.84149999912188,1610,
+1,3,regex,sea|ocean,200,166.91400000127032,1535,
+1,4,regex,adventur.*,200,137.9690000012488,1248,
+1,5,keyword,sea,200,33.953500000279746,1502,
+1,6,keyword,love,200,26.57080000062706,1610,
+1,7,regex,sea|ocean,200,239.91449999994074,1535,
+1,8,regex,adventur.*,200,91.36039999975765,1248,
+1,9,keyword,sea,200,18.721200000072713,1502,
+1,10,keyword,love,200,17.919999998412095,1610,
+1,11,regex,sea|ocean,200,203.55779999954393,1535,
+1,12,regex,adventur.*,200,93.19580000010319,1248,
+1,13,keyword,sea,200,18.839899999875342,1502,
+1,14,keyword,love,200,17.74440000008326,1610,
+1,15,regex,sea|ocean,200,164.69239999969432,1535,
+1,16,regex,adventur.*,200,88.19709999988845,1248,
+1,17,keyword,sea,200,17.992200000662706,1502,
+1,18,keyword,love,200,19.253499998740153,1610,
+1,19,regex,sea|ocean,200,267.4635000003036,1535,
+1,20,regex,adventur.*,200,95.20669999983511,1248,
+1,21,keyword,sea,200,18.1724000012764,1502,
+1,22,keyword,love,200,18.220599999040132,1610,
+1,23,regex,sea|ocean,200,168.05510000085633,1535,
+1,24,regex,adventur.*,200,101.2918999986141,1248,
+2,1,keyword,sea,200,50.74889999923471,1502,
+2,2,keyword,love,200,55.003100000249106,1610,
+2,3,regex,sea|ocean,200,949.341400000776,1535,
+2,4,regex,adventur.*,200,324.0162000001874,1248,
+2,5,keyword,sea,200,72.06349999978556,1502,
+2,6,keyword,love,200,56.6832999993494,1610,
+2,7,regex,sea|ocean,200,1178.7602999993396,1535,
+2,8,regex,adventur.*,200,695.6386000001658,1248,
+2,9,keyword,sea,200,67.09979999868665,1502,
+2,10,keyword,love,200,117.34030000116036,1610,
+2,11,regex,sea|ocean,200,1103.725700000723,1535,
+2,12,regex,adventur.*,200,666.4326999998593,1248,
+2,13,keyword,sea,200,67.50049999936891,1502,
+2,14,keyword,love,200,55.74780000097235,1610,
+2,15,regex,sea|ocean,200,1019.132699999318,1535,
+2,16,regex,adventur.*,200,525.3069999998843,1248,
+2,17,keyword,sea,200,67.62960000014573,1502,
+2,18,keyword,love,200,57.21059999996214,1610,
+2,19,regex,sea|ocean,200,803.8565000006201,1535,
+2,20,regex,adventur.*,200,310.51119999938237,1248,
+2,21,keyword,sea,200,65.95769999876211,1502,
+2,22,keyword,love,200,58.77119999968272,1610,
+2,23,regex,sea|ocean,200,606.9616999993741,1535,
+2,24,regex,adventur.*,200,299.8191000006045,1248,
+4,1,keyword,sea,200,92.8027000009024,1502,
+4,2,keyword,love,200,95.18009999919741,1610,
+4,3,regex,sea|ocean,503,4.753999999593361,,Search is busy. Please try again shortly.
+4,4,regex,adventur.*,503,7.30920000023616,,Search is busy. Please try again shortly.
+4,5,keyword,sea,503,4.192399999737972,,Search is busy. Please try again shortly.
+4,6,keyword,love,503,2.583299999969313,,Search is busy. Please try again shortly.
+4,7,regex,sea|ocean,503,3.354899999976624,,Search is busy. Please try again shortly.
+4,8,regex,adventur.*,503,2.840200000719051,,Search is busy. Please try again shortly.
+4,9,keyword,sea,503,4.341699999713455,,Search is busy. Please try again shortly.
+4,10,keyword,love,503,2.6504999987082556,,Search is busy. Please try again shortly.
+4,11,regex,sea|ocean,503,2.8758000007655937,,Search is busy. Please try again shortly.
+4,12,regex,adventur.*,503,3.3881999988807365,,Search is busy. Please try again shortly.
+4,13,keyword,sea,503,3.009200001542922,,Search is busy. Please try again shortly.
+4,14,keyword,love,503,3.1018999998195795,,Search is busy. Please try again shortly.
+4,15,regex,sea|ocean,503,2.4419000001216773,,Search is busy. Please try again shortly.
+4,16,regex,adventur.*,503,2.8515999983937945,,Search is busy. Please try again shortly.
+4,17,keyword,sea,503,2.783899999485584,,Search is busy. Please try again shortly.
+4,18,keyword,love,503,3.425700000661891,,Search is busy. Please try again shortly.
+4,19,regex,sea|ocean,503,4.18560000071011,,Search is busy. Please try again shortly.
+4,20,regex,adventur.*,503,3.2269999992422527,,Search is busy. Please try again shortly.
+4,21,keyword,sea,503,2.9448999994201586,,Search is busy. Please try again shortly.
+4,22,keyword,love,503,3.738899999007117,,Search is busy. Please try again shortly.
+4,23,regex,sea|ocean,503,3.286099999968428,,Search is busy. Please try again shortly.
+4,24,regex,adventur.*,503,2.736899999945308,,Search is busy. Please try again shortly.

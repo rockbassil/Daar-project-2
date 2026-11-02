@@ -1,0 +1,56 @@
+{
+  "utc": "2026-10-20T09:34:34.218396+00:00",
+  "python": "3.12.1 (tags/v3.12.1:2305ca5, Dec  7 2023, 22:03:25) [MSC v.1937 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.22621-SP0",
+  "corpus": {
+    "books": 1700,
+    "words": 133587611,
+    "min_words": 10021,
+    "terms": 522166,
+    "corpus_ready": true,
+    "graph": {
+      "threshold": 0.5,
+      "distance_threshold": 0.5,
+      "comparison": "distance strictly less than distance_threshold",
+      "metric": "lecture3-weighted-shared",
+      "nodes": 1700,
+      "edges": 310714,
+      "iterations": 77,
+      "damping": 0.85,
+      "tolerance": 1e-10,
+      "seconds": 719.4827,
+      "representation": "occurrence counts over shared normalized indexed words",
+      "empty_intersection_distance": 1,
+      "ranking": "unweighted undirected PageRank"
+    }
+  },
+  "clients": [
+    1,
+    2,
+    4
+  ],
+  "requests_per_level": 24,
+  "queries": [
+    [
+      "keyword",
+      "sea"
+    ],
+    [
+      "keyword",
+      "love"
+    ],
+    [
+      "regex",
+      "sea|ocean"
+    ],
+    [
+      "regex",
+      "adventur.*"
+    ]
+  ],
+  "scope": "loopback HTTP including parsing, SQLite connection, search, and JSON serialization",
+  "warmup": "one request per query before measurements",
+  "p95": "nearest rank over successful requests only",
+  "physical_devices": false,
+  "active_search_limit": 2
+}

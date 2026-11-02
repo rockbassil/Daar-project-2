@@ -28,6 +28,9 @@ class Regex:
         end = self.add('match')
         self.patch(pending, end)
         self.initial = self.closure({self.start})
+        # Indexed words share many prefixes. Reuse NFA transitions across words
+        # while bounding memory for patterns with many reachable state sets.
+        self.transitions = {}
 
     def add(self, kind, value=None, out=None, other=None):
         self.states.append(State(kind, value, out, other))
@@ -152,6 +155,13 @@ class Regex:
     def fullmatch(self, word):
         active = self.initial
         for char in word:
+            key = (active, char)
+            cached = self.transitions.get(key)
+            if cached is not None:
+                active = cached
+                if not active:
+                    return False
+                continue
             targets = set()
             for index in active:
                 state = self.states[index]
@@ -161,6 +171,21 @@ class Regex:
                 if matches:
                     targets.add(state.out)
             active = self.closure(targets)
+            if len(self.transitions) < 16384:
+                self.transitions[key] = active
             if not active:
                 return False
         return any(self.states[i].kind == 'match' for i in active)
+
+    def first_characters(self):
+        """Finite possible first characters, or None for wildcard/complement."""
+        chars = set()
+        for index in self.initial:
+            state = self.states[index]
+            if state.kind == 'char':
+                chars.add(state.value)
+            elif state.kind == 'class' and not state.value[1]:
+                chars.update(state.value[0])
+            elif state.kind in ('any', 'class'):
+                return None
+        return frozenset(chars)

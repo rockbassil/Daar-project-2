@@ -1,0 +1,17 @@
+{
+  "utc": "2026-10-20T09:25:28.188Z",
+  "books": 1700,
+  "corpus_ready": true,
+  "checks": [
+    "keyword",
+    "pagerank view",
+    "frequency ordering",
+    "pagination when available",
+    "recommendations",
+    "regex",
+    "invalid regex",
+    "390px mobile layout"
+  ],
+  "physical_multi_device_test": false,
+  "passed": true
+}

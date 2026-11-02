@@ -14,6 +14,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--target', type=int, default=1700)
     parser.add_argument('--delay', type=float, default=2)
+    parser.add_argument('--skip-collect', action='store_true', help='Resume indexing/graph/validation using the saved corpus')
     args = parser.parse_args()
     if args.target < 1664:
         parser.error('Use the collect --seed command for development; full preparation requires at least 1664 books.')
@@ -30,6 +31,8 @@ def main():
 
     stages = [('collect', ['collect', '--target', str(args.target), '--delay', str(args.delay)]),
               ('index', ['index']), ('graph', ['graph']), ('validate', ['validate'])]
+    if args.skip_collect:
+        stages = stages[1:]
     env = dict(os.environ, PYTHONUTF8='1', PYTHONUNBUFFERED='1')
     with (data / 'preparation.log').open('a', encoding='utf-8', buffering=1) as log:
         for name, command in stages:

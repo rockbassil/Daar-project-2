@@ -8,8 +8,14 @@ START = re.compile(r"^\*\*\*\s*START OF (?:THE|THIS) PROJECT GUTENBERG.*?\*\*\*"
 END = re.compile(r"^\*\*\*\s*END OF (?:THE|THIS) PROJECT GUTENBERG.*?\*\*\*", re.I | re.M)
 
 
+def normalize_newlines(text):
+    """Canonical LF, including files affected by the old Windows writer."""
+    return text.replace('\r\r\n', '\n').replace('\r\n', '\n').replace('\r', '\n')
+
+
 def clean_text(text):
     """Remove Gutenberg's wrapper; keep the original file separately."""
+    text = normalize_newlines(text)
     start = START.search(text)
     if start:
         text = text[start.end():]

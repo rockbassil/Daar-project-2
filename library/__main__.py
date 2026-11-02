@@ -17,7 +17,7 @@ def main():
     index = sub.add_parser('index', help='Build/update the inverted index')
     index.add_argument('--books-dir', default=str(ROOT / 'data' / 'books'))
     graph = sub.add_parser('graph', help='Build Jaccard graph and compute PageRank')
-    graph.add_argument('--threshold', type=float, default=0.30)
+    graph.add_argument('--threshold', type=float, default=0.50, help='Similarity must exceed this value; distance must be less than 1 minus this value')
     sub.add_parser('validate', help='Verify corpus, postings and graph invariants')
     sub.add_parser('stats')
     server = sub.add_parser('serve', help='Start the application')
@@ -45,16 +45,10 @@ def main():
             elif args.command == 'stats':
                 print(json.dumps(stats(db), indent=2))
             elif args.command == 'validate':
-                summary = stats(db)
-                mismatches = db.execute('SELECT COUNT(*) FROM (SELECT b.id FROM books b LEFT JOIN postings p ON p.book_id=b.id GROUP BY b.id HAVING COALESCE(SUM(p.count),0) != b.words)').fetchone()[0]
-                score_total = db.execute('SELECT COALESCE(SUM(score),0) FROM scores').fetchone()[0]
-                checks = {'corpus_minimum': summary['corpus_ready'],
-                          'index_counts': mismatches == 0,
-                          'foreign_keys': not list(db.execute('PRAGMA foreign_key_check')),
-                          'graph_ready': summary['graph'] is not None,
-                          'pagerank_normalized': abs(score_total - 1) < 1e-8}
-                print(json.dumps({'stats': summary, 'checks': checks}, indent=2))
-                return 0 if all(checks.values()) else 1
+                from .validation import validate
+                result = validate(db)
+                print(json.dumps(result, indent=2))
+                return 0 if all(result['checks'].values()) else 1
         finally:
             db.close()
     except (ValueError, OSError) as error:

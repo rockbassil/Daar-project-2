@@ -7,7 +7,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-from .text import clean_text, tokens
+from .text import clean_text, normalize_newlines, tokens
 
 CATALOG = 'https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv'
 MIRROR = 'https://mirror.cs.odu.edu/gutenberg-epub'
@@ -58,11 +58,35 @@ def collect(data_dir, target=1700, seed=False, delay=2.0, mirror=MIRROR):
     state = json.loads(state_path.read_text(encoding='utf-8')) if state_path.exists() else {}
     hashes = set()
     accepted = 0
+    print('Checking saved corpus and reconciling content hashes...', flush=True)
     for path in books_dir.glob('*.json'):
         book = json.loads(path.read_text(encoding='utf-8'))
-        if path.with_suffix('.txt').exists() and book['words'] >= 10000:
-            hashes.add(book['digest'])
-            accepted += 1
+        text_path = path.with_suffix('.txt')
+        if not text_path.exists():
+            raise ValueError(f'Missing text for book {book["id"]}: {text_path}')
+        # Read without universal-newline conversion so the legacy CRCRLF can
+        # be repaired without confusing it with intentional empty lines.
+        with text_path.open(encoding='utf-8', newline='') as stream:
+            original = stream.read()
+        text = normalize_newlines(original)
+        content = clean_text(text)
+        digest = hashlib.sha256(content.encode('utf-8')).hexdigest()
+        count = len(tokens(content))
+        if count < 10000:
+            raise ValueError(f'Saved book {book["id"]} has only {count:,} words.')
+        if digest in hashes:
+            raise ValueError(f'Duplicate saved contents at book {book["id"]}.')
+        if text != original:
+            temporary = text_path.with_suffix('.txt.tmp')
+            temporary.write_text(text, encoding='utf-8', newline='')
+            temporary.replace(text_path)
+        if book['digest'] != digest or book['words'] != count:
+            book.update(digest=digest, words=count)
+            write_json(path, book)
+        hashes.add(digest)
+        accepted += 1
+        if accepted % 250 == 0:
+            print(f'Checked {accepted} saved books.', flush=True)
     candidates = [r for r in rows if r['Type'] == 'Text' and r['Language'].strip() == 'en']
     candidates.sort(key=lambda r: (int(r['Text#']) not in SEED_IDS, int(r['Text#'])))
     if seed:
@@ -82,7 +106,7 @@ def collect(data_dir, target=1700, seed=False, delay=2.0, mirror=MIRROR):
             raw = fetch(url)
             if len(raw) > 20_000_000:
                 raise ValueError('Book exceeds 20 MB download limit.')
-            text = raw.decode('utf-8-sig')
+            text = normalize_newlines(raw.decode('utf-8-sig'))
             if text.lstrip().lower().startswith(('<!doctype html', '<html')):
                 raise ValueError('Mirror returned HTML instead of plain text.')
             content = clean_text(text)
@@ -97,7 +121,7 @@ def collect(data_dir, target=1700, seed=False, delay=2.0, mirror=MIRROR):
                         'source': f'https://www.gutenberg.org/ebooks/{book_id}',
                         'download_url': url, 'language': 'en', 'words': count, 'digest': digest}
                 # Retain the source text including its original Gutenberg license.
-                (books_dir / f'{book_id}.txt').write_text(text, encoding='utf-8')
+                (books_dir / f'{book_id}.txt').write_text(text, encoding='utf-8', newline='')
                 write_json(books_dir / f'{book_id}.json', book)
                 hashes.add(digest)
                 accepted += 1
@@ -123,16 +147,31 @@ def collect(data_dir, target=1700, seed=False, delay=2.0, mirror=MIRROR):
 
 
 def index_directory(db, directory):
-    from .engine import import_book
+    from .engine import configure_bulk_import, import_book
+    configure_bulk_import(db)
     imported = 0
+    term_ids = {word: term_id for term_id, word in db.execute('SELECT id,word FROM terms')}
     paths = sorted(Path(directory).glob('*.json'), key=lambda p: int(p.stem))
-    for i, path in enumerate(paths, 1):
-        book = json.loads(path.read_text(encoding='utf-8'))
-        if db.execute('SELECT 1 FROM books WHERE id=?', (book['id'],)).fetchone():
-            continue
-        text = path.with_suffix('.txt').read_text(encoding='utf-8')
-        if import_book(db, book, text):
-            imported += 1
-        if i % 25 == 0 or i == len(paths):
-            print(f'Indexed {i}/{len(paths)} corpus entries.', flush=True)
+    try:
+        for i, path in enumerate(paths, 1):
+            book = json.loads(path.read_text(encoding='utf-8'))
+            if db.execute('SELECT 1 FROM books WHERE id=?', (book['id'],)).fetchone():
+                # Word postings are unchanged by newline normalization; migrate
+                # old hashes to the canonical content representation.
+                with path.with_suffix('.txt').open(encoding='utf-8', newline='') as stream:
+                    digest = hashlib.sha256(clean_text(stream.read()).encode('utf-8')).hexdigest()
+                db.execute('UPDATE books SET digest=? WHERE id=?', (digest, book['id']))
+            else:
+                text = path.with_suffix('.txt').read_text(encoding='utf-8')
+                if import_book(db, book, text, term_ids=term_ids, commit=False):
+                    imported += 1
+            if i % 25 == 0 or i == len(paths):
+                # Commit a bounded batch, so shared postings pages are written
+                # once per batch rather than once for each individual book.
+                db.commit()
+                print(f'Indexed {i}/{len(paths)} corpus entries.', flush=True)
+        db.commit()
+    except BaseException:
+        db.rollback()
+        raise
     return imported

@@ -1,0 +1,528 @@
+{
+  "corpus": {
+    "books": 1700,
+    "words": 133587611,
+    "min_words": 10021,
+    "terms": 522166,
+    "corpus_ready": true,
+    "graph": {
+      "threshold": 0.5,
+      "distance_threshold": 0.5,
+      "comparison": "distance strictly less than distance_threshold",
+      "metric": "lecture3-weighted-shared",
+      "nodes": 1700,
+      "edges": 310714,
+      "iterations": 77,
+      "damping": 0.85,
+      "tolerance": 1e-10,
+      "seconds": 719.4827,
+      "representation": "occurrence counts over shared normalized indexed words",
+      "empty_intersection_distance": 1,
+      "ranking": "unweighted undirected PageRank"
+    }
+  },
+  "thresholds": [
+    {
+      "threshold": 0.5,
+      "books": 1700,
+      "edges": 310714,
+      "density": 0.2151535505314545,
+      "mean_degree": 365.5458823529412,
+      "isolated_books": 11,
+      "components": 16,
+      "largest_component": 1664
+    },
+    {
+      "threshold": 0.55,
+      "books": 1700,
+      "edges": 160186,
+      "density": 0.11092061073988159,
+      "mean_degree": 188.45411764705884,
+      "isolated_books": 26,
+      "components": 33,
+      "largest_component": 1644
+    },
+    {
+      "threshold": 0.6,
+      "books": 1700,
+      "edges": 55620,
+      "density": 0.038514004777897036,
+      "mean_degree": 65.43529411764706,
+      "isolated_books": 116,
+      "components": 135,
+      "largest_component": 1520
+    },
+    {
+      "threshold": 0.65,
+      "books": 1700,
+      "edges": 9380,
+      "density": 0.006495170169303743,
+      "mean_degree": 11.035294117647059,
+      "isolated_books": 421,
+      "components": 492,
+      "largest_component": 947
+    }
+  ],
+  "jaccard_examples": [
+    {
+      "a": {
+        "id": 11,
+        "title": "Alice's Adventures in Wonderland",
+        "words": 26776
+      },
+      "b": {
+        "id": 84,
+        "title": "Frankenstein; or, the modern prometheus",
+        "words": 75201
+      },
+      "unique_words_a": 2636,
+      "unique_words_b": 7013,
+      "shared_words": 1590,
+      "minimum_count_sum_shared": 19656,
+      "maximum_count_sum_shared": 61074,
+      "similarity": 0.3218390804597701,
+      "distance": 0.6781609195402298,
+      "edge_in_final_graph": false
+    },
+    {
+      "a": {
+        "id": 11,
+        "title": "Alice's Adventures in Wonderland",
+        "words": 26776
+      },
+      "b": {
+        "id": 1342,
+        "title": "Pride and Prejudice",
+        "words": 127858
+      },
+      "unique_words_a": 2636,
+      "unique_words_b": 6822,
+      "shared_words": 1619,
+      "minimum_count_sum_shared": 22177,
+      "maximum_count_sum_shared": 104303,
+      "similarity": 0.21262092173762978,
+      "distance": 0.7873790782623702,
+      "edge_in_final_graph": false
+    },
+    {
+      "a": {
+        "id": 11,
+        "title": "Alice's Adventures in Wonderland",
+        "words": 26776
+      },
+      "b": {
+        "id": 1661,
+        "title": "The Adventures of Sherlock Holmes",
+        "words": 105286
+      },
+      "unique_words_a": 2636,
+      "unique_words_b": 7946,
+      "shared_words": 1880,
+      "minimum_count_sum_shared": 22753,
+      "maximum_count_sum_shared": 88630,
+      "similarity": 0.25671894392417915,
+      "distance": 0.7432810560758208,
+      "edge_in_final_graph": false
+    },
+    {
+      "a": {
+        "id": 11,
+        "title": "Alice's Adventures in Wonderland",
+        "words": 26776
+      },
+      "b": {
+        "id": 2701,
+        "title": "Moby Dick; Or, The Whale",
+        "words": 216603
+      },
+      "unique_words_a": 2636,
+      "unique_words_b": 17371,
+      "shared_words": 2149,
+      "minimum_count_sum_shared": 23351,
+      "maximum_count_sum_shared": 159076,
+      "similarity": 0.14679147074354396,
+      "distance": 0.8532085292564561,
+      "edge_in_final_graph": false
+    },
+    {
+      "a": {
+        "id": 84,
+        "title": "Frankenstein; or, the modern prometheus",
+        "words": 75201
+      },
+      "b": {
+        "id": 1342,
+        "title": "Pride and Prejudice",
+        "words": 127858
+      },
+      "unique_words_a": 7013,
+      "unique_words_b": 6822,
+      "shared_words": 3652,
+      "minimum_count_sum_shared": 57924,
+      "maximum_count_sum_shared": 125860,
+      "similarity": 0.46022564754489115,
+      "distance": 0.5397743524551089,
+      "edge_in_final_graph": false
+    },
+    {
+      "a": {
+        "id": 84,
+        "title": "Frankenstein; or, the modern prometheus",
+        "words": 75201
+      },
+      "b": {
+        "id": 1661,
+        "title": "The Adventures of Sherlock Holmes",
+        "words": 105286
+      },
+      "unique_words_a": 7013,
+      "unique_words_b": 7946,
+      "shared_words": 3640,
+      "minimum_count_sum_shared": 56521,
+      "maximum_count_sum_shared": 104692,
+      "similarity": 0.5398788828181714,
+      "distance": 0.4601211171818286,
+      "edge_in_final_graph": true
+    },
+    {
+      "a": {
+        "id": 84,
+        "title": "Frankenstein; or, the modern prometheus",
+        "words": 75201
+      },
+      "b": {
+        "id": 2701,
+        "title": "Moby Dick; Or, The Whale",
+        "words": 216603
+      },
+      "unique_words_a": 7013,
+      "unique_words_b": 17371,
+      "shared_words": 5086,
+      "minimum_count_sum_shared": 61563,
+      "maximum_count_sum_shared": 186959,
+      "similarity": 0.32928610016099785,
+      "distance": 0.6707138998390021,
+      "edge_in_final_graph": false
+    },
+    {
+      "a": {
+        "id": 1342,
+        "title": "Pride and Prejudice",
+        "words": 127858
+      },
+      "b": {
+        "id": 1661,
+        "title": "The Adventures of Sherlock Holmes",
+        "words": 105286
+      },
+      "unique_words_a": 6822,
+      "unique_words_b": 7946,
+      "shared_words": 3542,
+      "minimum_count_sum_shared": 78152,
+      "maximum_count_sum_shared": 131856,
+      "similarity": 0.5927071957286737,
+      "distance": 0.4072928042713263,
+      "edge_in_final_graph": true
+    },
+    {
+      "a": {
+        "id": 1342,
+        "title": "Pride and Prejudice",
+        "words": 127858
+      },
+      "b": {
+        "id": 2701,
+        "title": "Moby Dick; Or, The Whale",
+        "words": 216603
+      },
+      "unique_words_a": 6822,
+      "unique_words_b": 17371,
+      "shared_words": 4517,
+      "minimum_count_sum_shared": 93876,
+      "maximum_count_sum_shared": 194045,
+      "similarity": 0.4837846891185034,
+      "distance": 0.5162153108814966,
+      "edge_in_final_graph": false
+    },
+    {
+      "a": {
+        "id": 1661,
+        "title": "The Adventures of Sherlock Holmes",
+        "words": 105286
+      },
+      "b": {
+        "id": 2701,
+        "title": "Moby Dick; Or, The Whale",
+        "words": 216603
+      },
+      "unique_words_a": 7946,
+      "unique_words_b": 17371,
+      "shared_words": 5401,
+      "minimum_count_sum_shared": 87646,
+      "maximum_count_sum_shared": 190302,
+      "similarity": 0.4605626845750439,
+      "distance": 0.5394373154249561,
+      "edge_in_final_graph": false
+    }
+  ],
+  "pagerank_examples": [
+    {
+      "book": {
+        "id": 11,
+        "title": "Alice's Adventures in Wonderland",
+        "words": 26776
+      },
+      "degree": 288,
+      "pagerank": 0.0004980174178407941,
+      "teleportation": 8.823529411764708e-05,
+      "dangling_share": 4.879779966285157e-07,
+      "neighbor_contribution_total": 0.0004092941456843256,
+      "recomputed_next_iteration": 0.0004980174177986012,
+      "absolute_residual": 4.219292016466314e-14,
+      "largest_contributions": [
+        {
+          "id": 970,
+          "title": "Uncle Josh's Punkin Centre Stories",
+          "pagerank": 0.00019381437491766554,
+          "degree": 66,
+          "contribution": 2.49609422242448e-06
+        },
+        {
+          "id": 697,
+          "title": "The Light Princess",
+          "pagerank": 0.0005073510459624765,
+          "degree": 208,
+          "contribution": 2.073309562827428e-06
+        },
+        {
+          "id": 137,
+          "title": "Sara Crewe; Or, What Happened at Miss Minchin's Boarding School",
+          "pagerank": 0.0003843512343484929,
+          "degree": 158,
+          "contribution": 2.06771233668493e-06
+        },
+        {
+          "id": 1332,
+          "title": "Peter Pan in Kensington Gardens",
+          "pagerank": 0.0004847225053659494,
+          "degree": 206,
+          "contribution": 2.000068590102218e-06
+        },
+        {
+          "id": 93,
+          "title": "Tom Sawyer, Detective",
+          "pagerank": 0.000256912089740614,
+          "degree": 111,
+          "contribution": 1.967344831347044e-06
+        }
+      ]
+    },
+    {
+      "book": {
+        "id": 84,
+        "title": "Frankenstein; or, the modern prometheus",
+        "words": 75201
+      },
+      "degree": 531,
+      "pagerank": 0.0006890150989310289,
+      "teleportation": 8.823529411764708e-05,
+      "dangling_share": 4.879779966285157e-07,
+      "neighbor_contribution_total": 0.0006002918268672386,
+      "recomputed_next_iteration": 0.0006890150989815142,
+      "absolute_residual": 5.048533206070127e-14,
+      "largest_contributions": [
+        {
+          "id": 1440,
+          "title": "Woman and Labour",
+          "pagerank": 0.0003570575095219733,
+          "degree": 217,
+          "contribution": 1.3986123644869923e-06
+        },
+        {
+          "id": 1831,
+          "title": "The Lock and Key Library: Classic Mystery and Detective Stories: Old Time English",
+          "pagerank": 0.000717913549249393,
+          "degree": 441,
+          "contribution": 1.3837335983264945e-06
+        },
+        {
+          "id": 1470,
+          "title": "The Fall of the Moghul Empire of Hindustan",
+          "pagerank": 0.0003887228548517163,
+          "degree": 243,
+          "contribution": 1.35973015071588e-06
+        },
+        {
+          "id": 2047,
+          "title": "The Lock and Key Library: the Most Interesting Stories of All Nations: French Novels",
+          "pagerank": 0.0006337317369665571,
+          "degree": 397,
+          "contribution": 1.3568563637823013e-06
+        },
+        {
+          "id": 1498,
+          "title": "Beacon Lights of History, Volume 3 part 1: The Middle Ages",
+          "pagerank": 0.0004210393638654458,
+          "degree": 265,
+          "contribution": 1.3505036199457696e-06
+        }
+      ]
+    },
+    {
+      "book": {
+        "id": 1342,
+        "title": "Pride and Prejudice",
+        "words": 127858
+      },
+      "degree": 318,
+      "pagerank": 0.0005351705741722603,
+      "teleportation": 8.823529411764708e-05,
+      "dangling_share": 4.879779966285157e-07,
+      "neighbor_contribution_total": 0.0004464473021019604,
+      "recomputed_next_iteration": 0.000535170574216236,
+      "absolute_residual": 4.39757822170983e-14,
+      "largest_contributions": [
+        {
+          "id": 1564,
+          "title": "Boswell's Life of Johnson\r\nAbridged and edited, with an introduction by Charles Grosvenor Osgood",
+          "pagerank": 0.00045685511397340075,
+          "degree": 111,
+          "contribution": 3.498440061958474e-06
+        },
+        {
+          "id": 621,
+          "title": "The Varieties of Religious Experience: A Study in Human Nature",
+          "pagerank": 0.0004557762892349855,
+          "degree": 136,
+          "contribution": 2.848601807718659e-06
+        },
+        {
+          "id": 700,
+          "title": "The Old Curiosity Shop",
+          "pagerank": 0.000499707178756989,
+          "degree": 151,
+          "contribution": 2.812921204923448e-06
+        },
+        {
+          "id": 506,
+          "title": "The Shuttle",
+          "pagerank": 0.00042877202515110126,
+          "degree": 138,
+          "contribution": 2.6409871114379424e-06
+        },
+        {
+          "id": 831,
+          "title": "Four Arthurian Romances",
+          "pagerank": 0.00040957593138915056,
+          "degree": 132,
+          "contribution": 2.637420770308924e-06
+        }
+      ]
+    },
+    {
+      "book": {
+        "id": 1661,
+        "title": "The Adventures of Sherlock Holmes",
+        "words": 105286
+      },
+      "degree": 524,
+      "pagerank": 0.000743030611404697,
+      "teleportation": 8.823529411764708e-05,
+      "dangling_share": 4.879779966285157e-07,
+      "neighbor_contribution_total": 0.0006543073393544583,
+      "recomputed_next_iteration": 0.0007430306114687339,
+      "absolute_residual": 6.403688343481484e-14,
+      "largest_contributions": [
+        {
+          "id": 1660,
+          "title": "Scenes from a Courtesan's Life",
+          "pagerank": 0.0004991335552157097,
+          "degree": 193,
+          "contribution": 2.198256590328255e-06
+        },
+        {
+          "id": 1400,
+          "title": "Great Expectations",
+          "pagerank": 0.0004672820572994517,
+          "degree": 182,
+          "contribution": 2.1823612566183185e-06
+        },
+        {
+          "id": 1709,
+          "title": "New Grub Street",
+          "pagerank": 0.00045417358207381037,
+          "degree": 178,
+          "contribution": 2.168806431251342e-06
+        },
+        {
+          "id": 1396,
+          "title": "Rienzi, the Last of the Roman Tribunes",
+          "pagerank": 0.0005026948864720115,
+          "degree": 201,
+          "contribution": 2.125824146772188e-06
+        },
+        {
+          "id": 514,
+          "title": "Little Women",
+          "pagerank": 0.0004178110315278704,
+          "degree": 168,
+          "contribution": 2.113924861896963e-06
+        }
+      ]
+    },
+    {
+      "book": {
+        "id": 2701,
+        "title": "Moby Dick; Or, The Whale",
+        "words": 216603
+      },
+      "degree": 136,
+      "pagerank": 0.0004339728771972005,
+      "teleportation": 8.823529411764708e-05,
+      "dangling_share": 4.879779966285157e-07,
+      "neighbor_contribution_total": 0.0003452496051038622,
+      "recomputed_next_iteration": 0.0004339728772181378,
+      "absolute_residual": 2.0937299203410698e-14,
+      "largest_contributions": [
+        {
+          "id": 1209,
+          "title": "History of the Conquest of Peru",
+          "pagerank": 0.0004827840171474731,
+          "degree": 53,
+          "contribution": 7.742762539157588e-06
+        },
+        {
+          "id": 1468,
+          "title": "The History of England, from the Accession of James II \u2014 Volume 1",
+          "pagerank": 0.0005142995488912353,
+          "degree": 59,
+          "contribution": 7.40940028063644e-06
+        },
+        {
+          "id": 1320,
+          "title": "Criminal Psychology: A Manual for Judges, Practitioners, and Students",
+          "pagerank": 0.00024366676361280284,
+          "degree": 28,
+          "contribution": 7.397026752531515e-06
+        },
+        {
+          "id": 1301,
+          "title": "The French Revolution: A History",
+          "pagerank": 0.00024216969578358893,
+          "degree": 29,
+          "contribution": 7.0980772902086414e-06
+        },
+        {
+          "id": 820,
+          "title": "Edison: His Life and Inventions",
+          "pagerank": 0.00034527664642519895,
+          "degree": 42,
+          "contribution": 6.987741653843312e-06
+        }
+      ]
+    }
+  ],
+  "analysis_seconds": 2.359928600000785,
+  "note": "Connectivity alone does not establish semantic relevance; collect real user judgments.",
+  "threshold_method": "exact filtering of the stored complete edge set for stricter cutoffs"
+}

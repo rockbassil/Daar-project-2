@@ -1,0 +1,12 @@
+{
+  "status": "no_completed_trials",
+  "expected_trials": 24,
+  "completed_trials": 0,
+  "participants_with_completed_trials": 0,
+  "missing_judgments": 120,
+  "by_ranking": {},
+  "paired_trials": 0,
+  "mean_paired_pagerank_minus_frequency": null,
+  "trials": [],
+  "note": "Descriptive judgments only; no recall, causal benefit or statistical significance is established."
+}

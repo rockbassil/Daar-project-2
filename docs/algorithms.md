@@ -1,8 +1,8 @@
 # Algorithm and architecture notes
 
-These describe the implemented choices. Compare them with Lectures 1 and 3 before
-finalizing the report: the assignment refers to those definitions, but those
-lecture documents are not present in this workspace.
+These describe the implemented choices. Lecture 1 was checked from the supplied
+course folder, and Lecture 3 was obtained from the professor's official course
+page. The graph follows its occurrence-count formula and strict threshold.
 
 ## Architecture
 
@@ -31,10 +31,15 @@ letter sequences with optional internal apostrophes. Digits and underscores are
 not indexed. No stemming and no stopword removal are performed. This preserves
 exact normalized word search and keeps the Jaccard definition transparent.
 Book length is the number of these tokens, not file size or vocabulary size.
+Line endings are normalized to LF before hashing. Saved source text retains its
+Gutenberg wrapper; legacy Windows CRCRLF files are repaired during collection.
 
 `terms(id, word)` provides a unique dictionary. `postings(term_id, book_id, count)`
 records occurrences. For example, "sea sea ocean" creates sea→2 and ocean→1.
 SQLite B-tree indexes support term and postings lookup. Import is atomic per book.
+Bulk preparation uses atomic batches of 25 books, a shared vocabulary-ID map,
+and sorted postings inserts. It uses a page cache capped at 512 MiB and WAL with
+NORMAL synchronization; this generated index can be resumed after interruption.
 Collecting all counts takes O(T) expected time for T tokens, excluding database
 insertion costs. Posting storage is proportional to distinct term/book pairs.
 
@@ -54,6 +59,12 @@ after the **entire indexed word** has been consumed. Cycles in epsilon transitio
 are tracked with a visited set. No exponential backtracking is used.
 
 For m states and a word of length L: O(mL) time and O(m) active-state memory.
+The matcher reuses up to 16,384 state-set/character transitions across words.
+For a finite initial-character set of at most eight characters, search uses
+SQLite word-index ranges to filter candidates, then runs the NFA on every
+candidate. Epsilon alternatives are handled explicitly. Wildcards, negated
+classes, and larger initial alphabets retain the full-vocabulary scan. This
+changes the amount of work while preserving whole-word matching semantics.
 Vocabulary search costs O(m times the total characters in the vocabulary), plus
 postings aggregation. Expressions are limited to 128 characters. A query has an
 eight-second vocabulary-scan budget checked between words; this is not a hard
@@ -67,38 +78,51 @@ quantifier that causes pathological behavior in backtracking engines.
 
 ## Jaccard graph
 
-For books represented by sets A and B of all their normalized indexed words:
+The [official Lecture 3](https://perso.lip6.fr/binh-minh.bui-xuan/files/daar2026/daar3.pdf),
+pages 10–12, uses weighted index-table entries `(word, occurrence count)`. Its
+displayed sums range over words shared by both documents. For shared words C:
 
-J(A,B) = |A intersection B| / |A union B|; distance d(A,B) = 1 - J(A,B).
+`minimum = sum(min(count_A(w), count_B(w)) for w in C)`
 
-An undirected edge exists iff J(A,B) >= threshold (default 0.30). Equivalently,
-d(A,B) <= 0.70. This threshold is a provisional implementation choice, not a course
-requirement: evaluate multiple values and justify your final value using graph
-density and recommendation relevance. Similarity is stored on each edge.
+`maximum = sum(max(count_A(w), count_B(w)) for w in C)`
 
-Each vocabulary term is assigned a bit; each book becomes an integer bitset.
-Intersection size is `bit_count(bits_a & bits_b)` and union size follows from the
-two set sizes. This computes **exact** Jaccard, not an approximate top-term sketch.
-For N books and V vocabulary terms, all-pairs comparison is roughly O(N² V/w)
-machine-word operations, and bitsets use O(NV/w) words. Stored edges can be O(N²).
-Keeping all common words may inflate similarities; compare that limitation with
-stopword-filtered representations in the report rather than changing definitions
-without documenting it.
+`distance = (maximum - minimum) / maximum`; `similarity = minimum / maximum`.
 
-On the initial 12-book development corpus, thresholds .15/.20/.25/.30/.35
-produce 65/59/45/31/9 edges respectively (out of 66 possible). The default .30
-avoids the almost-complete graph observed at .15. This is development evidence,
-not proof of the optimal threshold on the full corpus.
+An edge exists when distance is **strictly less** than the distance threshold.
+The default distance threshold is 0.50, equivalently similarity **greater than**
+0.50. CLI `--threshold` denotes this similarity cutoff. For no shared words the
+slide's fraction has a zero denominator; the implementation explicitly assigns
+distance 1 (similarity 0), preventing a link. This is a documented convention.
 
-Hand-check fixture:
+This follows the slide's shared-word domain literally, rather than ordinary set
+Jaccard or a weighted union with absent words assigned zero. Consequently, words
+unique to one document do not contribute: different vocabularies can have zero
+distance if all shared counts agree. Discuss that limitation and the influence
+of book length/common words in the report; do not silently replace the formula.
 
-- A = {sea, ocean, adventure}
-- B = {sea, ocean, voyage}
-- C = {ocean, voyage, ship}
-- D = {forest, tree, green}
+Exact integer bit planes accelerate the computation. Plane i marks vocabulary
+positions whose occurrence count has bit i set. Compare count planes from the
+most significant bit to identify which document has the smaller count at each
+shared word, select min/max planes, then sum their bit counts weighted by 2^i.
+This computes the same integer sums as a direct per-word loop. Tests verify 225
+document pairs against independent count sums, including sparse positions,
+disjoint vocabularies, empty vectors, and large counts.
 
-J(A,B)=1/2, J(B,C)=1/2, J(A,C)=1/5; D has no shared words. At threshold .4 the graph
-is A—B—C plus isolated D. Tests verify these exact edges.
+For N books, vocabulary ID span V, maximum count bit depth b, and machine word
+width w, comparison is approximately O(N² bV/w) word operations; vector storage
+is bounded by O(NbV/w), with leading zero regions omitted in Python integers.
+Edges can occupy O(N²). Counts are retained exactly; there is no approximate
+top-term sketch or stopword removal.
+
+Hand fixture: A={sea:2,ocean:1,adventure:1}, B={sea:1,ocean:1,voyage:1},
+C={ocean:1,voyage:1,ship:1}, D={forest:1,tree:1,green:1}.
+A/B have minimum 2 and maximum 3, so distance 1/3. A/C and B/C have distance 0.
+D has distance 1 to the others. At distance cutoff .10 (similarity > .90), the
+graph is A—C—B plus isolated D; these exact edges are tested. A separate test
+excludes an edge at distance exactly .50 when the cutoff is .50.
+
+The prior set-based graph and measurements are archived under
+`reports/set-jaccard-results/` as historical comparison, not the final graph.
 
 ## PageRank
 
@@ -134,6 +158,8 @@ Broad queries can match the entire corpus and legitimately yield no recommendati
 ## References to consult and cite
 
 - Course lectures 1 and 3: primary source for the assignment's formal definitions.
+- Lecture 3, weighted index-table distance and strict threshold, pages 10–12:
+  https://perso.lip6.fr/binh-minh.bui-xuan/files/daar2026/daar3.pdf
 - Ken Thompson, "Programming Techniques: Regular Expression Search Algorithm",
   Communications of the ACM, 11(6), 1968, pp. 419–422.
 - Lawrence Page, Sergey Brin, Rajeev Motwani, Terry Winograd, "The PageRank Citation

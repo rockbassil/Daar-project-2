@@ -1,0 +1,44 @@
+{
+  "utc": "2026-10-20T09:44:44.938265+00:00",
+  "archive": "daar-assignment2-PREVIEW.zip",
+  "archive_bytes": 2338943,
+  "archive_integrity": true,
+  "clean_extraction": true,
+  "network_downloads": false,
+  "no_bulk_database": true,
+  "checks": [
+    {
+      "command": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": "Checking saved corpus and reconciling content hashes...\nCorpus: 1/1 valid books. Downloads are resumable.\nCollection finished: 1 valid books.\nIndexed 1/1 corpus entries.\n",
+      "stderr": "test_isolates_and_empty_graph (test_algorithms.PageRankTests.test_isolates_and_empty_graph) ... ok\ntest_star_graph_has_known_stationary_distribution (test_algorithms.PageRankTests.test_star_graph_has_known_stationary_distribution) ... ok\ntest_nested_quantifier_does_not_backtrack (test_algorithms.RegexTests.test_nested_quantifier_does_not_backtrack) ... ok\ntest_reject_invalid_or_unsupported_patterns (test_algorithms.RegexTests.test_reject_invalid_or_unsupported_patterns) ... ok\ntest_supported_grammar_against_independent_reference (test_algorithms.RegexTests.test_supported_grammar_against_independent_reference) ... ok\ntest_bulk_import_rolls_back_failed_batch_and_preserves_graph (test_algorithms.SearchTests.test_bulk_import_rolls_back_failed_batch_and_preserves_graph) ... ok\ntest_duplicate_and_undersized_books (test_algorithms.SearchTests.test_duplicate_and_undersized_books) ... ok\ntest_empty_result (test_algorithms.SearchTests.test_empty_result) ... ok\ntest_invalid_inputs (test_algorithms.SearchTests.test_invalid_inputs) ... ok\ntest_jaccard_edges_against_hand_calculation (test_algorithms.SearchTests.test_jaccard_edges_against_hand_calculation) ... ok\ntest_keyword_and_frequency_ranking (test_algorithms.SearchTests.test_keyword_and_frequency_ranking) ... ok\ntest_new_book_invalidates_graph (test_algorithms.SearchTests.test_new_book_invalidates_graph) ... ok\ntest_pagerank_ranking (test_algorithms.SearchTests.test_pagerank_ranking) ... ok\ntest_pagination_and_recommendation_consistency (test_algorithms.SearchTests.test_pagination_and_recommendation_consistency) ... ok\ntest_regex_occurrence_aggregation (test_algorithms.SearchTests.test_regex_occurrence_aggregation) ... ok\ntest_regex_prefix_filter_against_exhaustive_reference (test_algorithms.SearchTests.test_regex_prefix_filter_against_exhaustive_reference) ... ok\ntest_unicode_regex_prefix (test_algorithms.SearchTests.test_unicode_regex_prefix) ... ok\ntest_validation_detects_incomplete_normalized_scores (test_algorithms.SearchTests.test_validation_detects_incomplete_normalized_scores) ... ok\ntest_validation_detects_incorrect_posting_totals (test_algorithms.SearchTests.test_validation_detects_incorrect_posting_totals) ... ok\ntest_legacy_corpus_hash_migration_and_resume (test_algorithms.TextTests.test_legacy_corpus_hash_migration_and_resume) ... ok\ntest_line_endings_have_identical_cleaned_content (test_algorithms.TextTests.test_line_endings_have_identical_cleaned_content) ... ok\ntest_wrappers_and_unicode (test_algorithms.TextTests.test_wrappers_and_unicode) ... ok\ntest_bit_planes_against_independent_count_sums (test_algorithms.WeightedJaccardTests.test_bit_planes_against_independent_count_sums) ... ok\ntest_graph_uses_strict_course_distance_threshold (test_algorithms.WeightedJaccardTests.test_graph_uses_strict_course_distance_threshold) ... ok\ntest_blank_and_deleted_judgments_are_missing_not_negative (test_evaluation.EvaluationTests.test_blank_and_deleted_judgments_are_missing_not_negative) ... ok\ntest_incomplete_trial_does_not_enter_mean_or_pair (test_evaluation.EvaluationTests.test_incomplete_trial_does_not_enter_mean_or_pair) ... ok\ntest_known_precision_and_paired_difference (test_evaluation.EvaluationTests.test_known_precision_and_paired_difference) ... ok\ntest_reject_duplicate_altered_and_invalid_judgments (test_evaluation.EvaluationTests.test_reject_duplicate_altered_and_invalid_judgments) ... ok\ntest_error_statuses_and_path_isolation (test_http.HTTPTests.test_error_statuses_and_path_isolation) ... 127.0.0.1 - - [20/Oct/2026 11:44:43] \"GET /api/search?q=%28&mode=regex HTTP/1.1\" 400 -\n127.0.0.1 - - [20/Oct/2026 11:44:43] \"GET /api/search?q=ocean&page=no HTTP/1.1\" 400 -\n127.0.0.1 - - [20/Oct/2026 11:44:43] \"GET /data/library.sqlite3 HTTP/1.1\" 404 -\n127.0.0.1 - - [20/Oct/2026 11:44:43] \"GET /../library/engine.py HTTP/1.1\" 404 -\n127.0.0.1 - - [20/Oct/2026 11:44:43] \"GET /api/missing HTTP/1.1\" 404 -\nok\ntest_search_and_stats (test_http.HTTPTests.test_search_and_stats) ... 127.0.0.1 - - [20/Oct/2026 11:44:43] \"GET /api/stats HTTP/1.1\" 200 -\n127.0.0.1 - - [20/Oct/2026 11:44:43] \"GET /api/search?q=ocean HTTP/1.1\" 200 -\nok\ntest_static_interface_and_headers (test_http.HTTPTests.test_static_interface_and_headers) ... 127.0.0.1 - - [20/Oct/2026 11:44:44] \"GET / HTTP/1.1\" 200 -\nok\n\n----------------------------------------------------------------------\nRan 31 tests in 1.682s\n\nOK\n"
+    },
+    {
+      "command": [
+        "-m",
+        "library",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: __main__.py [-h] [--db DB]\n                   {collect,index,graph,validate,stats,serve} ...\n\nDAAR book search toolkit (Python standard library only).\n\npositional arguments:\n  {collect,index,graph,validate,stats,serve}\n    collect             Download and validate books; safe to resume\n    index               Build/update the inverted index\n    graph               Build Jaccard graph and compute PageRank\n    validate            Verify corpus, postings and graph invariants\n    serve               Start the application\n\noptions:\n  -h, --help            show this help message and exit\n  --db DB               Path to SQLite database\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "scripts/build_report.py"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"status\": \"no_completed_trials\",\n  \"expected_trials\": 24,\n  \"completed_trials\": 0,\n  \"participants_with_completed_trials\": 0,\n  \"missing_judgments\": 120,\n  \"by_ranking\": {},\n  \"paired_trials\": 0,\n  \"mean_paired_pagerank_minus_frequency\": null,\n  \"note\": \"Descriptive judgments only; no recall, causal benefit or statistical significance is established.\"\n}\nBuilt C:\\Users\\user\\Desktop\\uni corses\\daar course\\Daar-project-2\\dist\\package-check-bido5bmz\\docs\\report-draft.html; export with node scripts/export_report.cjs\n",
+      "stderr": ""
+    }
+  ],
+  "passed": true,
+  "scope": "Offline source tests, CLI and report HTML build. Full corpus download/rebuild and physical clients excluded."
+}

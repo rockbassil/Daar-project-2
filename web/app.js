@@ -108,7 +108,7 @@ async function runSearch(newSearch = true) {
     $('#recommendations').replaceChildren(...data.recommendations.map((book) => {
       const link = sourceLink(book, 'recommendation');
       link.append(element('h3', '', book.title), element('p', '', book.author),
-        element('p', '', `${(book.similarity * 100).toFixed(1)}% vocabulary overlap with a top result ↗`));
+        element('p', '', `${(book.similarity * 100).toFixed(1)}% word-frequency agreement with a top result ↗`));
       return link;
     }));
     history.replaceState(null, '', `/?${new URLSearchParams(activeSearch)}`);

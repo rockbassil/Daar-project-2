@@ -1,13 +1,22 @@
 # Margin — DAAR book search
 
 A responsive book search application with an SQLite inverted index, a custom
-Thompson-NFA regular-expression engine, an exact Jaccard similarity graph,
+Thompson-NFA regular-expression engine, the Lecture 3 occurrence-weighted graph,
 PageRank ranking, and graph-neighbor recommendations.
 
 **Python 3.10+ only. No pip/npm packages or API keys are required by the app.**
 The browser UI uses plain HTML/CSS/JavaScript; it has no build step or CDN dependency.
 
 ## Run it
+
+If the full database is already prepared in this working folder, run
+`python -m library serve --host 0.0.0.0 --port 8000` and open
+**http://127.0.0.1:8000**, or double-click **run.cmd**. The launcher validates the
+database and opens the browser. See [the testing guide](docs/testing-guide.md)
+and [current preparation/verification status](docs/progress.md).
+
+For a new checkout, the commands below create a small development collection;
+use the full preparation pipeline further down for the required assignment corpus.
 
 In PowerShell, open this project directory and run:
 
@@ -34,7 +43,7 @@ There are no anchors, counted repeats, shorthand classes, lookarounds or backref
 ```powershell
 python -m library collect --target 1700
 python -m library index
-python -m library graph --threshold 0.30
+python -m library graph --threshold 0.50
 python -m library validate
 ```
 
@@ -50,6 +59,12 @@ Or run the complete preparation pipeline (collect, index, graph, validation):
 ```powershell
 python scripts/prepare_library.py --target 1700
 ```
+
+If collection is already complete and only indexing/graph construction needs to
+resume, use `python scripts/prepare_library.py --target 1700 --skip-collect`.
+The collector automatically repairs the old Windows newline format and reconciles
+content hashes. Bulk indexing commits batches of 25 books and uses an SQLite page
+cache of up to 512 MiB (allocated as needed), plus the vocabulary map.
 
 This writes progress to `data/preparation.json` and `data/preparation.log` and
 stops on errors. Rerun the same command to resume after an interrupted download.
@@ -72,6 +87,8 @@ python -m unittest discover -s tests -v
 python scripts/benchmark.py --sizes 4 8 12 --repeats 3
 # After collecting the full corpus:
 python scripts/benchmark.py --sizes 100 500 1000 1700 --repeats 5
+python scripts/http_benchmark.py --clients 1 2 4 --requests 24
+python scripts/graph_analysis.py
 ```
 
 The benchmark creates temporary independent indexes, uses nested subsets ordered
@@ -80,6 +97,11 @@ by Gutenberg ID, and writes raw timings, environment metadata and SVG charts to
 actual size; it never labels a 12-book experiment as a 1,700-book experiment.
 These measure engine latency, not end-to-end HTTP latency. Human relevance tests
 and multi-device validation still need to be carried out and documented.
+The separate HTTP benchmark reports latency, throughput, and rejected requests
+at different concurrency levels. Graph analysis exports connectivity comparisons
+and worked Jaccard/PageRank computations on real books. Full-corpus artifacts
+are saved in `reports/final-results/`; inspect their metadata for actual corpus
+sizes and measurement scope.
 
 Optional browser checks (Chrome installed):
 
@@ -134,11 +156,18 @@ Pagination returns 12 books per page. Invalid input returns HTTP 400.
 
 ## Remaining academic deliverables
 
-The implementation is a starting point for the assignment, not a claim that the
-whole graded submission is complete. Use [the checklist](docs/checklist.md) and
-[report plan](docs/report-plan.md). In particular, confirm course-specific graph
-and regex definitions against the lecture notes, gather human relevance feedback,
-run the full-corpus experiments, and prepare your own report and presentation.
+A 12-page working report is available as [report-draft.pdf](docs/report-draft.pdf).
+The [completion guide](docs/finish-without-presentation.md) links the real-result
+judging sheets, active feedback CSV, physical-client record and report rebuild
+commands. The draft keeps missing human observations and team names explicit.
+Presentation/video work is deferred; the source/results ZIP is still a preview.
+
+Use [the checklist](docs/checklist.md), [report plan](docs/report-plan.md),
+and [selected video plan](docs/video-plan.md). Confirm course-specific definitions
+against the lecture notes, gather real relevance feedback, and write the final
+report using actual measurements. Automated checks do not establish human
+relevance or physical multi-device usability. The selected presentation format is
+a 4:30–5:30 video with a solid working demo.
 
 The brief states: live presentation **16 November 2026, 10:45–12:45**; Moodle
 submission **22 November 2026, 23:59**. The report is typically 10–15 pages (12
@@ -147,3 +176,15 @@ recommended; pages 16+ are not read). Use the required archive filename
 Exclude generated corpus, DB, temporary tools and caches from the source archive;
 include download/setup instructions and any materials the examiner needs.
 Confirm with the instructor how to provide a video if it makes the archive too large.
+
+Create a source/results preview with `python scripts/package_project.py --preview`.
+For the final video submission, supply the actual surnames, final report PDF and
+video, e.g.:
+
+```powershell
+python scripts/package_project.py --surnames SURNAME1 SURNAME2 --report path/to/report.pdf --video path/to/video.mp4
+```
+
+The packager excludes generated corpus/DB/caches, includes final measurements,
+checks ZIP integrity, and enforces a conservative 30 MB limit. A preview archive
+is not a completed graded submission.

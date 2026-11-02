@@ -1,0 +1,37 @@
+{
+  "stats": {
+    "books": 1700,
+    "words": 133587611,
+    "min_words": 10021,
+    "terms": 522166,
+    "corpus_ready": true,
+    "graph": {
+      "threshold": 0.5,
+      "distance_threshold": 0.5,
+      "comparison": "distance strictly less than distance_threshold",
+      "metric": "lecture3-weighted-shared",
+      "nodes": 1700,
+      "edges": 310714,
+      "iterations": 77,
+      "damping": 0.85,
+      "tolerance": 1e-10,
+      "seconds": 719.4827,
+      "representation": "occurrence counts over shared normalized indexed words",
+      "empty_intersection_distance": 1,
+      "ranking": "unweighted undirected PageRank"
+    }
+  },
+  "checks": {
+    "corpus_minimum": true,
+    "sqlite_integrity": true,
+    "index_counts": true,
+    "foreign_keys": true,
+    "graph_ready": true,
+    "lecture_graph_definition": true,
+    "graph_counts": true,
+    "graph_edges": true,
+    "pagerank_coverage": true,
+    "pagerank_finite_positive": true,
+    "pagerank_normalized": true
+  }
+}

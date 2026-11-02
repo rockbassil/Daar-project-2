@@ -1,0 +1,48 @@
+test_isolates_and_empty_graph (test_algorithms.PageRankTests.test_isolates_and_empty_graph) ... ok
+test_star_graph_has_known_stationary_distribution (test_algorithms.PageRankTests.test_star_graph_has_known_stationary_distribution) ... ok
+test_nested_quantifier_does_not_backtrack (test_algorithms.RegexTests.test_nested_quantifier_does_not_backtrack) ... ok
+test_reject_invalid_or_unsupported_patterns (test_algorithms.RegexTests.test_reject_invalid_or_unsupported_patterns) ... ok
+test_supported_grammar_against_independent_reference (test_algorithms.RegexTests.test_supported_grammar_against_independent_reference) ... ok
+test_bulk_import_rolls_back_failed_batch_and_preserves_graph (test_algorithms.SearchTests.test_bulk_import_rolls_back_failed_batch_and_preserves_graph) ... ok
+test_duplicate_and_undersized_books (test_algorithms.SearchTests.test_duplicate_and_undersized_books) ... ok
+test_empty_result (test_algorithms.SearchTests.test_empty_result) ... ok
+test_invalid_inputs (test_algorithms.SearchTests.test_invalid_inputs) ... ok
+test_jaccard_edges_against_hand_calculation (test_algorithms.SearchTests.test_jaccard_edges_against_hand_calculation) ... ok
+test_keyword_and_frequency_ranking (test_algorithms.SearchTests.test_keyword_and_frequency_ranking) ... ok
+test_new_book_invalidates_graph (test_algorithms.SearchTests.test_new_book_invalidates_graph) ... ok
+test_pagerank_ranking (test_algorithms.SearchTests.test_pagerank_ranking) ... ok
+test_pagination_and_recommendation_consistency (test_algorithms.SearchTests.test_pagination_and_recommendation_consistency) ... ok
+test_regex_occurrence_aggregation (test_algorithms.SearchTests.test_regex_occurrence_aggregation) ... ok
+test_regex_prefix_filter_against_exhaustive_reference (test_algorithms.SearchTests.test_regex_prefix_filter_against_exhaustive_reference) ... ok
+test_unicode_regex_prefix (test_algorithms.SearchTests.test_unicode_regex_prefix) ... ok
+test_validation_detects_incomplete_normalized_scores (test_algorithms.SearchTests.test_validation_detects_incomplete_normalized_scores) ... ok
+test_validation_detects_incorrect_posting_totals (test_algorithms.SearchTests.test_validation_detects_incorrect_posting_totals) ... ok
+Checking saved corpus and reconciling content hashes...
+Corpus: 1/1 valid books. Downloads are resumable.
+Collection finished: 1 valid books.
+Indexed 1/1 corpus entries.
+test_legacy_corpus_hash_migration_and_resume (test_algorithms.TextTests.test_legacy_corpus_hash_migration_and_resume) ... ok
+test_line_endings_have_identical_cleaned_content (test_algorithms.TextTests.test_line_endings_have_identical_cleaned_content) ... ok
+test_wrappers_and_unicode (test_algorithms.TextTests.test_wrappers_and_unicode) ... ok
+test_bit_planes_against_independent_count_sums (test_algorithms.WeightedJaccardTests.test_bit_planes_against_independent_count_sums) ... ok
+test_graph_uses_strict_course_distance_threshold (test_algorithms.WeightedJaccardTests.test_graph_uses_strict_course_distance_threshold) ... ok
+test_blank_and_deleted_judgments_are_missing_not_negative (test_evaluation.EvaluationTests.test_blank_and_deleted_judgments_are_missing_not_negative) ... ok
+test_incomplete_trial_does_not_enter_mean_or_pair (test_evaluation.EvaluationTests.test_incomplete_trial_does_not_enter_mean_or_pair) ... ok
+test_known_precision_and_paired_difference (test_evaluation.EvaluationTests.test_known_precision_and_paired_difference) ... ok
+test_reject_duplicate_altered_and_invalid_judgments (test_evaluation.EvaluationTests.test_reject_duplicate_altered_and_invalid_judgments) ... ok
+test_error_statuses_and_path_isolation (test_http.HTTPTests.test_error_statuses_and_path_isolation) ... 127.0.0.1 - - [20/Oct/2026 11:42:48] "GET /api/search?q=%28&mode=regex HTTP/1.1" 400 -
+127.0.0.1 - - [20/Oct/2026 11:42:48] "GET /api/search?q=ocean&page=no HTTP/1.1" 400 -
+127.0.0.1 - - [20/Oct/2026 11:42:48] "GET /data/library.sqlite3 HTTP/1.1" 404 -
+127.0.0.1 - - [20/Oct/2026 11:42:48] "GET /../library/engine.py HTTP/1.1" 404 -
+127.0.0.1 - - [20/Oct/2026 11:42:48] "GET /api/missing HTTP/1.1" 404 -
+ok
+test_search_and_stats (test_http.HTTPTests.test_search_and_stats) ... 127.0.0.1 - - [20/Oct/2026 11:42:48] "GET /api/stats HTTP/1.1" 200 -
+127.0.0.1 - - [20/Oct/2026 11:42:48] "GET /api/search?q=ocean HTTP/1.1" 200 -
+ok
+test_static_interface_and_headers (test_http.HTTPTests.test_static_interface_and_headers) ... 127.0.0.1 - - [20/Oct/2026 11:42:49] "GET / HTTP/1.1" 200 -
+ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 1.539s
+
+OK
